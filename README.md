@@ -26,12 +26,12 @@ git push -u origin main
 ```
 
 
-### ۲. تهیه پارامترهای محیطی (.env File)
+### ۲. تهیه پارامترهای محیطی .env
 ```bash
 # PostgreSQL Credentials
 POSTGRES_NAME=odooali_db
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_secure_password  
+POSTGRES_PASSWORD=000000  
 ```
 
 ### ۳. ساخت کانتینرها با Docker Compose
@@ -87,40 +87,39 @@ CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 version: '3.8'
 
 services:
-  # سرویس Django (backend)
+  
   django:
-    build: .  # از Dockerfile در پوشه فعلی ساخته بشه
+    build: .  
     ports:
-      - "8000:8000"  # مape کردن port 8000 داخل کانتینر به 8000 روی میزبان
+      - "8000:8000"  
     environment:
-      - DJANGO_SETTINGS_MODULE=OdooAli.settings  # تنظیم فایل settings
-      - POSTGRES_NAME=warehouse_db  # نام دیتابیس PostgreSQL
-      - POSTGRES_USER=your_db_user  # کاربر دیتابیس
-      - POSTGRES_PASSWORD=your_db_password  # پسورد کاربر
-      - POSTGRES_HOST=db  # نام سرویس PostgreSQL (از service postgres)
-      - POSTGRES_PORT=5432  # پورت پیشفرض PostgreSQL
+      - DJANGO_SETTINGS_MODULE=OdooAli.settings  
+      - POSTGRES_NAME=warehouse_db  
+      - POSTGRES_USER=your_db_user  
+      - POSTGRES_PASSWORD=your_db_password  
+      - POSTGRES_HOST=db  
+      - POSTGRES_PORT=5432  
     volumes:
-      - ./OdooAli:/app/OdooAli  # mount کردن فایل‌های Django برای بروزرسانی
-      - ./requirements.txt:/app/requirements.txt  # mount کردن requirements.txt
-      - ./static:/app/static  # mount کردن پوشه static (برای CSS/JS)
-      - ./templates:/app/templates  # mount کردن پوشه templates (برای HTML)
+      - ./OdooAli:/app/OdooAli 
+      - ./requirements.txt:/app/requirements.txt  
+      - ./static:/app/static  
+      - ./templates:/app/templates  
     depends_on:
-      - postgres  # اجرای سرویس Django بعد از postgres
+      - postgres  
 
-  # سرویس PostgreSQL (دیتابیس)
+  
   postgres:
-    image: postgres:14-alpine  # نسخه 14 PostgreSQL
+    image: postgres:14-alpine  
     environment:
-      - POSTGRES_DB=warehouse_db  # نام دیتابیس
-      - POSTGRES_USER=your_db_user  # کاربر
-      - POSTGRES_PASSWORD=your_db_password  # پسورد
+      - POSTGRES_DB=warehouse_db  
+      - POSTGRES_USER=your_db_user  
+      - POSTGRES_PASSWORD=your_db_password  
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # ذخیره دیتابیس روی میزبان
+      - postgres_data:/var/lib/postgresql/data  
     ports:
-      - "5432:5432"  # map کردن port 5432 PostgreSQL
-    restart: always  # restart کردن در صورت خاموش شدن
+      - "5432:5432"  
+    restart: always  
 
-# ضریب (Volume) برای ذخیره داده‌های دیتابیس
 volumes:
   postgres_data:
   ```
@@ -434,7 +433,7 @@ urlpatterns = [
 ```
 
 ## گام 7: ساخت قالب‌های HTML (Templates)
-### 7.1 قالب اصلی (templates/home.html)
+### 7.1 قالب اصلی templates/home.html
 
 
 ```html
@@ -531,7 +530,7 @@ urlpatterns = [
 </html>
 ```
 
-### 7.2 قالب افزودن محصول (templates/add_product.html)
+### 7.2 قالب افزودن محصول templates/add_product.html
 
 ```html
 <!DOCTYPE html>
@@ -561,7 +560,7 @@ urlpatterns = [
 </html>
 ```
 
-### 7.3 قالب ویرایش موجودی (templates/edit_stock.html)
+### 7.3 قالب ویرایش موجودی templates/edit_stock.html
 
 ```html
 <!DOCTYPE html>
@@ -615,7 +614,7 @@ urlpatterns = [
 </html>
 ```
 
-### 7.4 قالب گزارش حركات (templates/movement_history.html)
+### 7.4 قالب گزارش حركات templates/movement_history.html
 
 ```html
 <!DOCTYPE html>
