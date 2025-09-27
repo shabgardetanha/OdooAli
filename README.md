@@ -16,8 +16,6 @@ cd OdooAli
 
 ```bash
 git config --global user.name "shabgardetanha"
-git config --global user.email "shabgardetanha34@yahoo.com"
-
 
 git init
 git add README.md
