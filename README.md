@@ -6,6 +6,13 @@
 سیستم انبارداری ساده‌ای مبتنی بر Django ، PostgreSQL ، Tailwind CSS و Pandas. این سیستم امکان مدیریت محصولات، ورود/خروج موجودی و نمایش گزارش‌ها را فراهم می‌کند
 
 ---
+packs your entire repository into a single text
+https://repomix.com/
+ChatGPT PROMPTs Splitter
+
+https://chatgpt-prompt-splitter.vercel.app/
+
+---
 
 ## 📥 اجرای پروژه 
 ### ۱. کلون کردن پروژه از GitHub
