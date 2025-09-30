@@ -3,227 +3,392 @@
 # سیستم انبارداری ساده (Simple Warehouse Management System)
 
 ## توضیح (Description)  
-سیستم انبارداری ساده‌ای مبتنی بر Django (فریم‌ورک وب پایتون)، PostgreSQL (دیتابیس رابطه‌ای)، Tailwind CSS (استایل سازی) و Pandas (تجزیه و تحلیل داده). این سیستم امکان مدیریت محصولات، ورود/خروج موجودی و نمایش گزارش‌ها را فراهم می‌کند.
+سیستم انبارداری ساده‌ای مبتنی بر Django ، PostgreSQL ، Tailwind CSS و Pandas. این سیستم امکان مدیریت محصولات، ورود/خروج موجودی و نمایش گزارش‌ها را فراهم می‌کند
 
 ---
 
-## 📥 نصب و اجرای پروژه (Installation & Execution)
+## 📥 اجرای پروژه 
 ### ۱. کلون کردن پروژه از GitHub
 ```bash
 git clone https://github.com/your-username/OdooAli.git
-cd OdooAli
+cd 
+docker-compose -u bulit
 ```
 
-```bash
-git config --global user.name "shabgardetanha"
+## 📥 ایجاد پروژه از صفر با داکر
 
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/shabgardetanha/OdooAli.git
-git push -u origin main
+
 ```
-
-
-### ۲. تهیه پارامترهای محیطی .env
-```bash
-# PostgreSQL Credentials
-POSTGRES_NAME=odooali_db
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=000000  
-```
-
-### ۳. ساخت کانتینرها با Docker Compose
-
-
-✅ نصب داکر و Docker Compose
-
-#### ۳.۱ نصب dependencies (کتابخانه‌ها)
-
-ابتدا دستور زیر را اجرا کنید تا به روز شوند
-
-```bash
-
-pip install -r requirements.txt
+F:\VsProject\OdooAli\
+├── backend/
+│   ├── manage.py
+│   ├── requirements.txt
+│   └── OdooALI/
+frontend/
+├── package.json
+├── vite.config.js
+├── postcss.config.js
+├── tailwind.config.js
+├── src/
+│   ├── main.jsx        # نقطه ورود React
+│   ├── App.jsx         # کامپوننت اصلی
+│   ├── index.css       # استایل اصلی Tailwind
+│   ├── components/
+│   │   └── Header.jsx
+│   └── pages/
+│       └── Home.jsx
+├── nginx/
+│   └── default.conf
+├── .env
+└── docker-compose.prod.yml
 ```
 
 
-📝requirements.txt
+#### ۳.۱ ایجاد فایل ها
 
+
+# 1️⃣ backend/requirements.txt
 ```
-django>=4.0
-psycopg2-binary>=2.9
-pandas>=2.0
-tailwindcss>=3.0
+Django>=4.2
+djangorestframework
+psycopg2-binary
+djangorestframework-simplejwt
 ```
 
-🐳 Dockerfile
-
-
-```Dockerfile
+# 2️⃣ backend/Dockerfile.prod
+```
 FROM python:3.11-slim
-
-RUN useradd -m django_user
-USER django_user
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev default-libmysqlclient-dev nodejs npm
-
-COPY --chown=django_user:django_user requirements.txt .
-
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chown=django_user:django_user . .
+COPY backend/ .
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+RUN python manage.py collectstatic --noinput
+
+EXPOSE 8000
+CMD ["gunicorn", "OdooALI.wsgi:application", "--bind", "0.0.0.0:8000"]
 ```
 
-🖥️ docker-compose.yml
+# 3️⃣ frontend/package.json
+```
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
+    "@reduxjs/toolkit": "^1.9.0",
+    "tailwindcss": "^3.3.0"
+  },
+  "devDependencies": {
+    "vite": "^4.5.0",
+    "@vitejs/plugin-react": "^3.0.0",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.18"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
+```
 
+# 4️⃣ frontend/vite.config.js
+```
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-```yaml
-version: '3.8'
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000
+  }
+})
+```
 
-services:
-  
-  django:
-    build: .  
-    ports:
-      - "8000:8000"  
-    environment:
-      - DJANGO_SETTINGS_MODULE=OdooAli.settings  
-      - POSTGRES_NAME=warehouse_db  
-      - POSTGRES_USER=your_db_user  
-      - POSTGRES_PASSWORD=your_db_password  
-      - POSTGRES_HOST=db  
-      - POSTGRES_PORT=5432  
-    volumes:
-      - ./OdooAli:/app/OdooAli 
-      - ./requirements.txt:/app/requirements.txt  
-      - ./static:/app/static  
-      - ./templates:/app/templates  
-    depends_on:
-      - postgres  
+# 5️⃣ frontend/tailwind.config.js
+```
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
 
-  
-  postgres:
-    image: postgres:14-alpine  
-    environment:
-      - POSTGRES_DB=warehouse_db  
-      - POSTGRES_USER=your_db_user  
-      - POSTGRES_PASSWORD=your_db_password  
-    volumes:
-      - postgres_data:/var/lib/postgresql/data  
-    ports:
-      - "5432:5432"  
-    restart: always  
+# 6️⃣ frontend/postcss.config.js
+```
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
 
-volumes:
-  postgres_data:
-  ```
+# 7️⃣ frontend/Dockerfile.prod
+```
+FROM node:18-alpine AS build
+WORKDIR /app
 
+COPY package*.json ./
+RUN npm ci --silent
 
-🚀 نحوه اجرای پروژه با داکر
+COPY . .
+RUN npm run build
 
-برای اتصال Django به دیتابیس PostgreSQL در کانتینر، در فایل OdooAli/settings.py، جایگزینی DATABASES با این کد:
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+COPY --from=build /app/dist ./
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
 
-```python
-import os
+# 8️⃣ nginx.conf
+```
+server {
+    listen 80;
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME', 'warehouse_db'),
-        'USER': os.environ.get('POSTGRES_USER', 'your_db_user'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'your_db_password'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),  # در docker-compose، HOST 'db' هست
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+    location / {
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+        try_files $uri /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://web:8000/api/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
     }
 }
 ```
 
+# 9️⃣ docker-compose.prod.yml
+```
+version: '3.9'
 
-### ۳. ساخت کانتینرهای داکر
+services:
+  db:
+    image: postgres:15
+    container_name: odooali_db
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: odooali_web
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: odooali_frontend
+    expose:
+      - "80"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: odooali_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+# 10 .env
+```
+POSTGRES_DB=odooali
+POSTGRES_USER=ali
+POSTGRES_PASSWORD=000000
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+DEBUG=1
+SECRET_KEY=your-secret-key
+ALLOWED_HOSTS=*
+```
+
+# 11 .gitignore
+```
+.# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# ---- Django ----
+*.log
+db.sqlite3
+media/
+staticfiles/
+.env
+.env.*
+
+# ---- Virtualenv ----
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ---- IDE ----
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Docker ----
+/postgres_data/
+/*.pid
+
+# ---- Node / Tailwind ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.pnp.*
+coverage/
+.cache/
+.parcel-cache/
+.theme/node_modules/
+theme/node_modules/
+
+# ---- Compiled CSS / JS ----
+*.min.css
+*.min.js
+*.map
+*.lock
+
+# ---- Other ----
+*.bak
+*.swp
+*.swo
+```
+
+
+
+# 11️⃣ مراحل راه‌اندازی از صفر
+1. ساخت پروژه Django با اسم OdooALI:
 ```bash
-docker-compose up --build
+cd backend
+django-admin startproject OdooALI .
 ```
-
-
-### ۴. انجام میگریشن و مهاجرت (برای اولین اجرای پروژه)
+2. نصب وابستگی‌ها:
 ```bash
-docker exec -it odooali-django bash
-
-python manage.py makemigrations
-python manage.py migrate
-python manage.py createsuperuser  # ایجاد سوپر یوزر
+pip install -r requirements.txt
+```
+3. مهاجرت دیتابیس و ایجاد superuser:
+```bash
+docker-compose -f docker-compose.prod.yml run web python manage.py migrate
+docker-compose -f docker-compose.prod.yml run web python manage.py createsuperuser
 ```
 
 
+3️⃣ ساخت build React
 
-## گام 1: نصب ابزارها (Installation & Setup)  
+داخل پوشه frontend (روی هاست):
 
-
-### 1.1 نصب Python و Django
-```
-pip install django psycopg2-binary
-```
-
-### 1.2 نصب PostgreSQL
-
-[برای ویندوز PostgreSQL ](/https://www.postgresql.org/download/)
-
-
-
-### ۱. ایجاد و تنظیم دیتابیس PostgreSQL  
-اول، دیتابیس را برای پروژه ایجاد کنید:  
-
-
-
-# ساخت دیتابیس (مثال: نام دیتابیس "warehouse_db")
-```BASH
-CREATE DATABASE warehouse_db;
-```
-# ساخت کاربر دیتابیس (اگر لازم باشه)
-
-```
-CREATE USER your_db_user WITH PASSWORD 'your_db_password';
-ALTER ROLE your_db_user SET client_encoding TO 'utf8';
-ALTER ROLE your_db_user SET default_transaction_isolation TO 'read committed';
-ALTER ROLE your_db_user SET timezone TO 'UTC';
-GRANT ALL PRIVILEGES ON DATABASE warehouse_db TO your_db_user;
-\q  # خروج از shell
+```cd frontend
+npm install      # اگر هنوز نصب نکردی
+npm run build
 ```
 
-## نصب ابزارها وdependencies
-داخل پوشه پروژه، اجرای دستور زیر برای نصب کتابخانه‌ها:
 
-### 1.3 نصب Tailwind CSS
+4. Build و اجرای کانتینرها:
+```bash
+docker-compose -f docker-compose.prod.yml build --no-cache
+docker-compose -f docker-compose.prod.yml up -d
+```
+5. بعد از بالا آمدن کانتینرها:
+- Frontend روی http://localhost/
+- Backend API روی http://localhost/api/
+
+
+
+
+
+
+
+---
+از اینجا به بعد نسخه بدون داکر حساب میشود و چون وقت نیست مرتب نکردم
+ساخت پروژه Django
 
 ```bash
-mkdir -p static/css static/js templates
-
-npm install -D tailwindcss@3 postcss autoprefixer
-npx tailwindcss init -p  
-
-npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
+docker-compose run django django-admin startproject OdooAli .
 ```
 
 
-## گام 2: ساخت پروژه Django
 
-### 2.1 ایجاد پروژه و داپل (App)
 
-```bash
-django-admin startproject OdooAli
-cd OdooAli
-python manage.py startapp warehouse
+### 2.3 تنظیمات دیتابیس PostgreSQL در settings.py
+
+```python
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "mydb",
+        "USER": "myuser",
+        "PASSWORD": "mypassword",
+        "HOST": "db",
+        "PORT": "5432",
+    }
+}
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 ```
 
-### 2.2 افزودن داپل به settings.py
-فایل باز کنید OdooAli/settings.py و در قسمت INSTALLED_APPS، warehouse را افزوده کنید:
 
+### 2.2 تنضیمات settings.py
 ```python
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -232,30 +397,37 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'warehouse',  # افزودن داپل ما
+    'OdooALi',
 ]
 ```
 
-### 2.3 تنظیمات دیتابیس PostgreSQL در settings.py
-در همان فایل settings.py، تغییرات زیر را در قسمت DATABASES انجام دهید (تغییر your_db_name, your_db_user, و your_db_password به داده‌های خود):
 
-```python
-# DATABASES
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'warehouse_db',  # نام دیتابیس را همانطور که ساخته‌اید وارد کنید
-        'USER': 'your_db_user',   # کاربر دیتابیس
-        'PASSWORD': 'your_db_password',  # پسورد کاربر
-        'HOST': 'localhost',      # اگر دیتابیس روی سرور است، آدرس IP را وارد کنید
-        'PORT': '5432',            # پورت پیشفرض PostgreSQL
-    }
-}
+## ۵. فعال کردن Tailwind CSS
 
-# STATICFILES_DIRS (اگر لازم باشه)
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+```bash
+docker-compose run django python manage.py tailwind init theme
+```
+
+داخل فولدر theme
+
+```
+cd theme/
+docker-compose run django npm install --prefix theme
+
+```
+
+
+### ۴. انجام میگریشن (برای اولین اجرای پروژه)
+```bash
+docker exec -it django bash
+
+docker exec -it django python manage.py makemigrations
+docker exec -it django python manage.py migrate
+```
+### ساخت سوپر یوزر
+
+```bash
+docker exec -it django python manage.py createsuperuser  
 ```
 
 
@@ -289,11 +461,6 @@ class StockMovement(models.Model):
 
 ```
 
-### 3.2 مهاجرت به دیتابیس
-```bash
-python manage.py makemigrations  # ساخت مهاجرت
-python manage.py migrate         # اجرای مهاجرت
-```
 ## گام 4: فرم‌های ورودی (Forms)
 ### 4.1 تعریف فرم‌ها در warehouse/forms.py
 ```python
@@ -407,12 +574,6 @@ def movement_history(request):
 ```
 
 
-## ۵. فعال کردن Tailwind CSS
-برای تولید CSS و پیاده‌سازی تغییرات، یک terminal جداگانه باز کرده و دستور زیر را اجرا کنید:
-
-```bash
-npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
-```
 
 ## گام 6: تعریف URL‌ها
 ### 6.1 تنظیمات URL در OdooAli/urls.py
@@ -669,6 +830,148 @@ urlpatterns = [
 </html>
 ```
 
+
+### 12. اجرای پروژه
+```bash
+docker-compose up --build
+```
+
+
+### ۳. دسترسی به سیستم
+
+صفحه اصلی: http://localhost:8000
+
+پنل ادمین: http://localhost:8000/admin 
+
+افزودن محصول جدید: http://localhost:8000/add_product
+
+گزارش حركات: http://localhost:8000/movement_history
+
+
+### 13. Git
+یک ریپو در GitHub بساز.
+
+```bash
+git config --global user.name "shabgardetanha"
+
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/shabgardetanha/OdooAli.git
+git push -u origin main
+```
+
+## بخش‌های پروژه (Project Structure)
+
+پروژه شما ممکنه به شکل زیر باشه:
+
+```
+myproject/
+OdooAli/
+│
+├── .env
+├── docker-compose.prod.yml
+├── Dockerfile.prod
+├── nginx.conf
+├── README.md
+│
+├── backend/
+│   ├── requirements.txt
+│   ├── manage.py
+│   ├── myproject/
+│   │   ├── __init__.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   └── app1/
+│       ├── __init__.py
+│       ├── models.py
+│       ├── views.py
+│       ├── serializers.py
+│       └── urls.py
+│
+└── frontend/
+    ├── package.json
+    ├── tailwind.config.js
+    ├── postcss.config.js
+    ├── Dockerfile.prod
+    └── src/
+        ├── index.js
+        ├── App.js
+        ├── utils/
+        │   └── api.js
+        ├── pages/
+        │   ├── Login.js
+        │   ├── Dashboard.js
+        │   └── Home.js
+        ├── components/
+        │   └── ProtectedRoute.js
+        └── store/
+            ├── store.js
+            └── authSlice.js
+```
+
+
+## توضیحات اضافه (Extras)
+🔍 مدل‌ها (Models)
+
+دو مدل اصلی برای پروژه تعریف شده‌اند:
+
+Product: مدیریت اطلاعات محصول (نام، موجودی فعلی، حداقل موجودی).
+
+StockMovement: پذیرش حركات ورود/خروج محصول (مقدار، زمان، توضیحات).
+
+
+
+
+
+
+
+
+
+
+
+## مستقیم بدون داکر
+## گام 1: نصب ابزارها (Installation & Setup)  
+
+
+### 1.1 نصب Python و Django
+```
+pip install django psycopg2-binary
+```
+
+### 1.2 نصب PostgreSQL
+
+[برای ویندوز PostgreSQL ](/https://www.postgresql.org/download/)
+
+
+
+### ۱. ایجاد و تنظیم دیتابیس PostgreSQL  
+اول، دیتابیس را برای پروژه ایجاد کنید:  
+
+
+
+# ساخت دیتابیس مثال: OdooAli_db
+```BASH
+CREATE DATABASE OdooAli_db;
+```
+# ساخت کاربر دیتابیس (اگر لازم باشه)
+
+```
+CREATE USER your_db_user WITH PASSWORD 'your_db_password';
+ALTER ROLE your_db_user SET client_encoding TO 'utf8';
+ALTER ROLE your_db_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE your_db_user SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE warehouse_db TO your_db_user;
+\q  # خروج از shell
+```
+
+
+
+
+
+
 ## گام 8: ایجاد سوپر یوزر و اجرای پروژه
 ### ۱. ایجاد سوپر یوزر (مدیر سیستم)
 
@@ -685,61 +988,44 @@ python manage.py runserver
 سرویس در http://localhost:8000 شروع می‌شود.
 
 
-### ۳. دسترسی به سیستم
 
-صفحه اصلی: http://localhost:8000
+### 1.3 نصب Tailwind CSS
 
-پنل ادمین Django: http://localhost:8000/admin (وارد شده با اطلاعات سوپر یوزر)
+```bash
+mkdir -p static/css static/js templates
 
-افزودن محصول جدید: http://localhost:8000/add_product
+npm install -D tailwindcss@3 postcss autoprefixer
+npx tailwindcss init -p  
 
-گزارش حركات: http://localhost:8000/movement_history
-
-
-## بخش‌های پروژه (Project Structure)
-
-
-پروژه شما ممکنه به شکل زیر باشه:
-
-```
-OdooAli/
-├── OdooAli/
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   ├── wsgi.py
-│   └── manage.py
-├── warehouse/
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── models.py
-│   ├── forms.py
-│   ├── views.py
-│   ├── urls.py
-│   ├── templates/
-│   └── static/
-├── requirements.txt       # لیست dependencies
-├── Dockerfile             # تعریف کانتینر Django
-├── docker-compose.yml     # مدیریت سرویس‌ها (Django + PostgreSQL)
-└── .env                   # پارامترهای محیطی (اختیاری)
+npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
 ```
 
-## توضیحات اضافه (Extras)
 
-🔍 مدل‌ها (Models)
+برای اتصال Django به دیتابیس PostgreSQL در کانتینر، در فایل OdooAli/settings.py، جایگزینی DATABASES با این کد:
 
-دو مدل اصلی برای پروژه تعریف شده‌اند:
+```python
+import os
 
-Product: مدیریت اطلاعات محصول (نام، موجودی فعلی، حداقل موجودی).
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_NAME', 'warehouse_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'your_db_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'your_db_password'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),  # در docker-compose، HOST 'db' هست
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+    }
+}
+```
 
-StockMovement: پذیرش حركات ورود/خروج محصول (مقدار، زمان، توضیحات).
 
-📊 Pandas
- در تجزیه و تحلیل
-در ویو home، داده‌های حركات ۷روز گذشته با Pandas به DataFrame تبدیل می‌شوند و به صفحه ارسال می‌شوند. این کمک می‌کند تا گزارش‌های ساده‌ای مانند نمایش مجموع حركات در بازه زمانی مشخص نمایش داده شود.
 
-🎨 Tailwind CSS
-Tailwind برای طراحی Responsive و Beatifull UI استفاده شده است. برای سفارشی‌سازی استایل‌ها، ویرایش فایل static/css/input.css و اضافه کردن کلاس‌های Tailwind (مثال: bg-gray-100, text-blue-500) را انجام دهید.
+
+
+
+```bash
+npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
+```
 
 
 
