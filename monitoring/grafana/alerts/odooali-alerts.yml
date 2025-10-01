@@ -1,0 +1,21 @@
+groups:
+  - name: odooali-alerts
+    interval: 1m
+    rules:
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend service is down"
+          description: "Backend service did not respond for 2 minutes"
+
+      - alert: FrontendDown
+        expr: up{job="frontend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Frontend service is down"
+          description: "Frontend service did not respond for 2 minutes"

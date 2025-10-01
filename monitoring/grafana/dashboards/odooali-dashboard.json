@@ -1,0 +1,34 @@
+{
+  "id": null,
+  "title": "OdooAli Monitoring",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Backend Error Rate",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m]))",
+          "refId": "A"
+        }
+      ],
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": { "params": [5], "type": "gt" },
+            "operator": { "type": "and" },
+            "query": { "params": ["A"] },
+            "reducer": { "type": "avg", "params": [] },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "notifications": [
+          { "uid": "slack-odooali" }
+        ]
+      }
+    }
+  ],
+  "schemaVersion": 36,
+  "version": 1
+}

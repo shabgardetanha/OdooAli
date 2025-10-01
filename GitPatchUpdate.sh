@@ -9,10 +9,10 @@ NC='\033[0m'
 
 # Naming according to operational checklist
 MAIN_BRANCH="main"
-NEW_BRANCH="feature/production-docker-nginx"
+NEW_BRANCH="feature/prod-monitor-logging-alert"
 PATCH_FILE="odooali-production-docker.patch"
-PR_TITLE="Setup production-ready Docker & Nginx for OdooAli"
-PR_BODY="Applied production-ready Docker & Nginx configuration for OdooAli project. Patch applied if available; branch ready for PR."
+PR_TITLE="Setup production-ready feature/prod-monitor-logging-alert"
+PR_BODY="Applied production-ready feature/prod-monitor-logging-alert."
 
 echo -e "${YELLOW}Switching to $MAIN_BRANCH branch...${NC}"
 git checkout $MAIN_BRANCH
