@@ -8,3 +8,4 @@ gunicorn
 Django>=4.2
 django-cors-headers
 django-prometheus
+python-dotenv

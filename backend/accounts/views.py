@@ -5,14 +5,25 @@ from .serializers import UserSerializer
 from rest_framework.permissions import AllowAny
 from django.db import connection
 from prometheus_client import Counter
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+
+
 
 frontend_events_total = Counter('frontend_events_total', 'Frontend event counts', ['event_type'])
 
-
-class RegisterUserView(generics.CreateAPIView):
-    queryset = User.objects.all()
+class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
+
+class LoginView(TokenObtainPairView):
+    # می‌توانید serializer دلخواه خود را اضافه کنید، ولی پیش‌فرض کافی است
+    pass
+
 
 def health(request):
     db_status = "unhealthy"
@@ -28,6 +39,9 @@ def health(request):
         "db": db_status
     })
 
+
+
+    
 
 def frontend_event(request):
     event_type = request.GET.get('type', 'unknown')

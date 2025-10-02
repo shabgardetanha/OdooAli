@@ -17,7 +17,7 @@ https://chatgpt-prompt-splitter.vercel.app/
 ## 📥 اجرای پروژه 
 ### ۱. کلون کردن پروژه از GitHub
 ```bash
-git clone https://github.com/your-username/OdooAli.git
+git clone https://github.com/shabgardetanha/OdooAli
 cd 
 docker-compose -u bulit
 ```
