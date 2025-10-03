@@ -1,0 +1,45 @@
+// frontend/src/components/ProductKanban.js
+import React, { useEffect } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useDispatch, useSelector } from 'react-redux';
+import { setProducts } from '../store';
+import { fetchProducts } from '../api';
+
+export default function ProductKanban() {
+  const dispatch = useDispatch();
+  const products = useSelector(state => state.products.items);
+
+  useEffect(() => {
+    fetchProducts().then(res => dispatch(setProducts(res.data)));
+  }, [dispatch]);
+
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    // ساده: reorder محلی بدون API call
+    const items = Array.from(products);
+    const [reordered] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reordered);
+    dispatch(setProducts(items));
+  };
+
+  return (
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="products">
+        {(provided) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            {products.map((p, index) => (
+              <Draggable key={p.id} draggableId={p.id.toString()} index={index}>
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                    {p.name} - ${p.price} - Stock: {p.stock}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
+  );
+}

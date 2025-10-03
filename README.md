@@ -2,7 +2,7 @@
 
 # سیستم انبارداری ساده (Simple Warehouse Management System)
 
-## توضیح (Description)  
+## توضیح (Description)
 سیستم انبارداری ساده‌ای مبتنی بر Django ، PostgreSQL ، Tailwind CSS و Pandas. این سیستم امکان مدیریت محصولات، ورود/خروج موجودی و نمایش گزارش‌ها را فراهم می‌کند
 
 ---
@@ -14,11 +14,11 @@ https://chatgpt-prompt-splitter.vercel.app/
 
 ---
 
-## 📥 اجرای پروژه 
+## 📥 اجرای پروژه
 ### ۱. کلون کردن پروژه از GitHub
 ```bash
 git clone https://github.com/shabgardetanha/OdooAli
-cd 
+cd
 docker-compose -u bulit
 ```
 
@@ -398,13 +398,13 @@ STATICFILES_DIRS = [
 ### 2.2 تنضیمات settings.py
 ```python
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'OdooALi',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "OdooALi",
 ]
 ```
 
@@ -434,7 +434,7 @@ docker exec -it django python manage.py migrate
 ### ساخت سوپر یوزر
 
 ```bash
-docker exec -it django python manage.py createsuperuser  
+docker exec -it django python manage.py createsuperuser
 ```
 
 
@@ -446,26 +446,31 @@ docker exec -it django python manage.py createsuperuser
 from django.db import models
 from django.utils import timezone
 
+
 class Product(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="نام محصول")
     current_stock = models.IntegerField(default=0, verbose_name="موجودی فعلی")
-    reorder_level = models.IntegerField(default=0, verbose_name="حداقل موجودی برای تامین")
+    reorder_level = models.IntegerField(
+        default=0, verbose_name="حداقل موجودی برای تامین"
+    )
     created_at = models.DateTimeField(default=timezone.now, verbose_name="تاریخ ساخت")
 
     def __str__(self):
         return self.name
 
+
 class StockMovement(models.Model):
-    MOVEMENT_TYPES = [('in', 'ورود'), ('out', 'خروج')]
+    MOVEMENT_TYPES = [("in", "ورود"), ("out", "خروج")]
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="محصول")
-    movement_type = models.CharField(max_length=3, choices=MOVEMENT_TYPES, verbose_name="نوع حركة")
+    movement_type = models.CharField(
+        max_length=3, choices=MOVEMENT_TYPES, verbose_name="نوع حركة"
+    )
     quantity = models.IntegerField(verbose_name="مقدار")
     timestamp = models.DateTimeField(default=timezone.now, verbose_name="تاریخ/زمان")
     description = models.TextField(blank=True, verbose_name="توضیحات")
 
     def __str__(self):
         return f"{self.product.name} - {self.movement_type} ({self.quantity})"
-
 ```
 
 ## گام 4: فرم‌های ورودی (Forms)
@@ -474,29 +479,31 @@ class StockMovement(models.Model):
 from django import forms
 from .models import Product, StockMovement
 
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'current_stock', 'reorder_level']
+        fields = ["name", "current_stock", "reorder_level"]
         labels = {
-            'name': 'نام محصول',
-            'current_stock': 'موجودی فعلی',
-            'reorder_level': 'حداقل موجودی برای تامین',
+            "name": "نام محصول",
+            "current_stock": "موجودی فعلی",
+            "reorder_level": "حداقل موجودی برای تامین",
         }
+
 
 class StockMovementForm(forms.ModelForm):
     class Meta:
         model = StockMovement
-        fields = ['product', 'movement_type', 'quantity', 'description']
+        fields = ["product", "movement_type", "quantity", "description"]
         labels = {
-            'product': 'محصول',
-            'movement_type': 'نوع حركة',
-            'quantity': 'مقدار',
-            'description': 'توضیحات',
+            "product": "محصول",
+            "movement_type": "نوع حركة",
+            "quantity": "مقدار",
+            "description": "توضیحات",
         }
 
     def clean_quantity(self):
-        quantity = self.cleaned_data['quantity']
+        quantity = self.cleaned_data["quantity"]
         if quantity <= 0:
             raise forms.ValidationError("مقدار باید بیش از صفر باشد.")
         return quantity
@@ -515,47 +522,62 @@ from django.db.models import F
 from django.utils import timezone
 from datetime import timedelta
 
+
 def home(request):
     products = Product.objects.all()
-    low_stock_products = Product.objects.filter(current_stock__lt=F('reorder_level'))
+    low_stock_products = Product.objects.filter(current_stock__lt=F("reorder_level"))
 
     # تجزیه و تحلیل حركات ۷روز گذشته با Pandas
     week_ago = timezone.now() - timedelta(days=7)
-    recent_movements = StockMovement.objects.filter(timestamp__gte=week_ago).order_by('-timestamp')
-    df = pd.DataFrame(list(recent_movements.values(
-        'product__name', 'movement_type', 'quantity', 'timestamp', 'description'
-    )))
-    df['timestamp'] = df['timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')  # تبدیل زمان به رشته
-    movement_report = df.to_html(index=False, classes="min-w-full divide-y divide-gray-200") if not df.empty else "هیچ حركة اخیری یافت نشد."
+    recent_movements = StockMovement.objects.filter(timestamp__gte=week_ago).order_by(
+        "-timestamp"
+    )
+    df = pd.DataFrame(
+        list(
+            recent_movements.values(
+                "product__name", "movement_type", "quantity", "timestamp", "description"
+            )
+        )
+    )
+    df["timestamp"] = df["timestamp"].dt.strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )  # تبدیل زمان به رشته
+    movement_report = (
+        df.to_html(index=False, classes="min-w-full divide-y divide-gray-200")
+        if not df.empty
+        else "هیچ حركة اخیری یافت نشد."
+    )
 
     context = {
-        'products': products,
-        'low_stock_products': low_stock_products,
-        'movement_report': movement_report,
+        "products": products,
+        "low_stock_products": low_stock_products,
+        "movement_report": movement_report,
     }
-    return render(request, 'home.html', context)
+    return render(request, "home.html", context)
+
 
 def add_product(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ProductForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'محصول جدید با موفقیت افزوده شد.')
-            return redirect('home')
+            messages.success(request, "محصول جدید با موفقیت افزوده شد.")
+            return redirect("home")
     else:
         form = ProductForm()
-    return render(request, 'add_product.html', {'form': form})
+    return render(request, "add_product.html", {"form": form})
+
 
 def edit_stock(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    if request.method == 'POST':
+    if request.method == "POST":
         form = StockMovementForm(request.POST)
         if form.is_valid():
             movement = form.save(commit=False)
             movement.product = product
 
             # بروزرسانی موجودی محصول
-            if movement.movement_type == 'in':
+            if movement.movement_type == "in":
                 product.current_stock += movement.quantity
             else:
                 product.current_stock -= movement.quantity
@@ -563,21 +585,26 @@ def edit_stock(request, product_id):
             # احراز هشدار برای موجودی منفی
             if product.current_stock < 0:
                 product.current_stock += movement.quantity  # لغو تغییر
-                messages.error(request, 'موجودی نمیتواند منفی شود!')
-                form = StockMovementForm(initial={'product': product})  # فرم را با اطلاعات فعلی بار کن
-                return render(request, 'edit_stock.html', {'form': form, 'product': product})
+                messages.error(request, "موجودی نمیتواند منفی شود!")
+                form = StockMovementForm(
+                    initial={"product": product}
+                )  # فرم را با اطلاعات فعلی بار کن
+                return render(
+                    request, "edit_stock.html", {"form": form, "product": product}
+                )
 
             product.save()
             movement.save()
-            messages.success(request, 'موجودی محصول بروزرسانی شد.')
-            return redirect('home')
+            messages.success(request, "موجودی محصول بروزرسانی شد.")
+            return redirect("home")
     else:
-        form = StockMovementForm(initial={'product': product})
-    return render(request, 'edit_stock.html', {'form': form, 'product': product})
+        form = StockMovementForm(initial={"product": product})
+    return render(request, "edit_stock.html", {"form": form, "product": product})
+
 
 def movement_history(request):
-    movements = StockMovement.objects.all().order_by('-timestamp')
-    return render(request, 'movement_history.html', {'movements': movements})
+    movements = StockMovement.objects.all().order_by("-timestamp")
+    return render(request, "movement_history.html", {"movements": movements})
 ```
 
 
@@ -746,7 +773,7 @@ urlpatterns = [
         <form method="post" class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
             {% csrf_token %}
             <input type="hidden" name="product" value="{{ product.id }}">
-            
+
             <!-- نوع حركة -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">نوع حركة:</label>
@@ -759,8 +786,8 @@ urlpatterns = [
             <!-- مقدار -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">مقدار:</label>
-                <input type="number" name="quantity" 
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring-blue-500" 
+                <input type="number" name="quantity"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring-blue-500"
                     value="{{ form.quantity.value }}" required>
             </div>
 
@@ -848,7 +875,7 @@ docker-compose up --build
 
 صفحه اصلی: http://localhost:8000
 
-پنل ادمین: http://localhost:8000/admin 
+پنل ادمین: http://localhost:8000/admin
 
 افزودن محصول جدید: http://localhost:8000/add_product
 
@@ -940,7 +967,7 @@ StockMovement: پذیرش حركات ورود/خروج محصول (مقدار، 
 
 
 ## مستقیم بدون داکر
-## گام 1: نصب ابزارها (Installation & Setup)  
+## گام 1: نصب ابزارها (Installation & Setup)
 
 
 ### 1.1 نصب Python و Django
@@ -954,8 +981,8 @@ pip install django psycopg2-binary
 
 
 
-### ۱. ایجاد و تنظیم دیتابیس PostgreSQL  
-اول، دیتابیس را برای پروژه ایجاد کنید:  
+### ۱. ایجاد و تنظیم دیتابیس PostgreSQL
+اول، دیتابیس را برای پروژه ایجاد کنید:
 
 
 
@@ -1002,7 +1029,7 @@ python manage.py runserver
 mkdir -p static/css static/js templates
 
 npm install -D tailwindcss@3 postcss autoprefixer
-npx tailwindcss init -p  
+npx tailwindcss init -p
 
 npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
 ```
@@ -1014,13 +1041,15 @@ npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
 import os
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME', 'warehouse_db'),
-        'USER': os.environ.get('POSTGRES_USER', 'your_db_user'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'your_db_password'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),  # در docker-compose، HOST 'db' هست
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_NAME", "warehouse_db"),
+        "USER": os.environ.get("POSTGRES_USER", "your_db_user"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "your_db_password"),
+        "HOST": os.environ.get(
+            "POSTGRES_HOST", "localhost"
+        ),  # در docker-compose، HOST 'db' هست
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
 ```
@@ -1033,6 +1062,65 @@ DATABASES = {
 ```bash
 npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
 ```
+
+
+
+
+
+توضیح کوتاه و کاربرد هر فایل اصلی که تا الان گفتیم رو می‌ذارم:
+
+پیکربندی پایتون
+
+.flake8 → قوانین lint برای بررسی سبک کدنویسی پایتون.
+
+.pylintrc → پیکربندی pylint برای تحلیل کد پایتون.
+
+mypy.ini → تنظیمات mypy برای تایپ چک کردن استاتیک پایتون.
+
+tox.ini → اجرای تست‌ها و محیط‌های چند نسخه‌ای پایتون.
+
+.pydocstyle → بررسی استاندارد docstring در پایتون.
+
+پیکربندی جاوااسکریپت / تایپ‌اسکریپت
+
+.eslintrc / .eslintignore → قوانین lint برای JS/TS و نادیده گرفتن فایل‌ها.
+
+.prettierrc / .prettierignore → فرمت خودکار کد (Prettier) و نادیده گرفتن فایل‌ها.
+
+tsconfig.json → تنظیمات کامپایلر TypeScript.
+
+babel.config.js → تبدیل کدهای JS/TS با Babel، برای مرورگر یا Node.
+
+پیکربندی Web / CSS
+
+.stylelintrc.json / .stylelintignore → بررسی و فرمت CSS/SCSS با Stylelint.
+
+.browserslistrc → مشخص کردن مرورگرهایی که کد باید پشتیبانی کنه.
+
+پیکربندی Webpack / Frontend
+
+webpack.config.js → تنظیمات بسته‌بندی پروژه برای تولید و توسعه.
+
+package.json → مدیریت بسته‌ها، اسکریپت‌ها و وابستگی‌ها.
+
+extensions.json → پیشنهاد افزونه‌ها برای VSCode.
+
+کنترل نسخه و Git
+
+.gitattributes → رفتار Git برای فایل‌ها (line endings، merge strategy).
+
+.gitpod.yml → پیکربندی محیط Gitpod.
+
+ابزارهای تست و پوشش کد
+
+jest.config.js → پیکربندی Jest برای تست JS/TS.
+
+codecov.yml → پیکربندی Codecov (اگر استفاده نشه، حذف می‌شه).
+
+ابزارهای دیگر
+
+.cspell.json → بررسی املای انگلیسی کد و مستندات.
+
 
 
 

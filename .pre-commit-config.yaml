@@ -1,0 +1,83 @@
+﻿ci:
+  autoupdate_commit_msg: "ci: autoupdate pre-commit hooks"
+  autoupdate_schedule: monthly
+
+repos:
+  # ------------------------------
+  # Python: Black Formatter
+  # ------------------------------
+  - repo: https://github.com/psf/black
+    rev: 23.9.1
+    hooks:
+      - id: black
+        language_version: python3
+
+  # ------------------------------
+  # Python: isort (import sorting)
+  # ------------------------------
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+
+  # ------------------------------
+  # Python: Flake8 (lint)
+  # ------------------------------
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-bugbear
+          - flake8-docstrings
+        args: [--config=.flake8]
+
+  # ------------------------------
+  # Frontend: ESLint + Prettier
+  # ------------------------------
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.36.0
+    hooks:
+      - id: eslint
+        language: node
+        entry: npx eslint
+        additional_dependencies:
+          - eslint-plugin-react
+          - "@babel/eslint-parser"
+          - eslint-plugin-react-hooks
+          - eslint-plugin-unicorn
+          - eslint-plugin-prettier
+          - eslint-plugin-testing-library
+          - eslint-plugin-jest-dom
+          - "@typescript-eslint/parser"
+          - "@typescript-eslint/eslint-plugin"
+        args:
+          - "--ext"
+          - ".ts,.tsx,.js,.jsx"
+          - "--config"
+          - "eslint.config.js"
+          - "--fix"
+
+  # ------------------------------
+  # Text hygiene (optional but useful)
+  # ------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  # ------------------------------
+  # Local hook: pytest
+  # اختیاری اما توصیه شده روی CI/CD
+  # ------------------------------
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run pytest
+        entry: pytest --maxfail=1 --disable-warnings -q
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [pre-push]

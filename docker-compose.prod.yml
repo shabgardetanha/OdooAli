@@ -21,6 +21,10 @@ services:
     image: redis:7-alpine
     container_name: odooali_redis
     restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - odooali_redis_data:/data
 
   backend:
     build:
@@ -45,11 +49,10 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      
 
   celery:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile.prod
     container_name: odooali_celery
     env_file: .env
@@ -61,7 +64,7 @@ services:
 
   celery_beat:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile.prod
     container_name: odooali_celery_beat
     env_file: .env
@@ -70,6 +73,7 @@ services:
       - backend
       - redis
     restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
@@ -78,7 +82,7 @@ services:
     env_file:
       - .env
     environment:
-    - REACT_APP_API_BASE_URL=http://django_web:8000/api
+    - REACT_APP_API_BASE_URL=http://odooali_backend:8000/api
     restart: unless-stopped
     depends_on:
       - backend
@@ -86,15 +90,14 @@ services:
       - frontend_logs:/var/log/nginx
       - ./frontend/nginx/ssl:/etc/nginx/ssl
 
-
   nginx:
     image: nginx:alpine
     container_name: odooali_nginx
     ports:
-      - "${NGINX_PORT}:80"
+      - "8080:80"
       - "443:443"
     volumes:
-      - ./frontend/dist:/usr/share/nginx/html:ro   
+      - ./frontend/dist:/usr/share/nginx/html:ro
       - ./frontend/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./frontend/nginx/ssl:/etc/nginx/ssl:ro
       - frontend_logs:/var/log/nginx
@@ -139,7 +142,6 @@ services:
     depends_on:
       - prometheus
 
-
   nginx-exporter:
     image: nginx/nginx-prometheus-exporter:latest
     container_name: nginx_exporter
@@ -152,7 +154,6 @@ services:
     restart: unless-stopped
     depends_on:
       - nginx
-
 
   alertmanager:
     image: prom/alertmanager
@@ -175,7 +176,7 @@ services:
     restart: unless-stopped
     depends_on:
       - db
-    
+
   node_exporter:
     image: prom/node-exporter
     container_name: node_exporter
@@ -215,7 +216,6 @@ services:
       - loki
     restart: unless-stopped
 
-
 volumes:
   postgres_data:
   backend_logs:
@@ -224,3 +224,4 @@ volumes:
   loki_data:
   static_volume:
   media_volume:
+  odooali_redis_data:

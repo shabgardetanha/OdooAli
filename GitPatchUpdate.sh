@@ -24,7 +24,7 @@ git checkout -b $NEW_BRANCH || git checkout $NEW_BRANCH
 if [ -f "$PATCH_FILE" ]; then
     echo -e "${YELLOW}Applying patch $PATCH_FILE...${NC}"
     git apply --whitespace=fix "$PATCH_FILE" || echo -e "${RED}⚠️ Some changes could not be applied automatically. Check for .rej files.${NC}"
-    
+
     echo -e "${YELLOW}Removing patch file $PATCH_FILE after applying...${NC}"
     rm "$PATCH_FILE"
 else

@@ -13,7 +13,7 @@
         <form method="post" class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
             {% csrf_token %}
             <input type="hidden" name="product" value="{{ product.id }}">
-            
+
             <!-- نوع حركة -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">نوع حركة:</label>
@@ -26,8 +26,8 @@
             <!-- مقدار -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">مقدار:</label>
-                <input type="number" name="quantity" 
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring-blue-500" 
+                <input type="number" name="quantity"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring-blue-500"
                     value="{{ form.quantity.value }}" required>
             </div>
 

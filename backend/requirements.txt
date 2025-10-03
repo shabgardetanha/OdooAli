@@ -8,4 +8,9 @@ gunicorn
 Django>=4.2
 django-cors-headers
 django-prometheus
-python-dotenv
+celery==5.3.4
+redis==5.0.1
+django-guardian==2.4.0
+django-simple-history
+channels
+channels_redis

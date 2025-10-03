@@ -11,7 +11,7 @@
       "title": "Backend CPU Usage",
       "targets": [
         {
-          "expr": "rate(container_cpu_usage_seconds_total{container=\"django_web\"}[1m])",
+          "expr": "rate(container_cpu_usage_seconds_total{container=\"odooali_backend\"}[1m])",
           "legendFormat": "CPU"
         }
       ]
@@ -21,7 +21,7 @@
       "title": "Backend Memory Usage",
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{container=\"django_web\"}",
+          "expr": "container_memory_usage_bytes{container=\"odooali_backend\"}",
           "legendFormat": "Memory"
         }
       ]

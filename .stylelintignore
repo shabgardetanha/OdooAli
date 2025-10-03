@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+
+bundle.css
+
+**/*.js
+**/*.jsx
+**/index.ts
+**/*.tsx
+
+node_modules/**/*.css
+node_modules/**/*.scss
+node_modules/**/*.less
+
+dist/**/*.css
+build/**/*.css

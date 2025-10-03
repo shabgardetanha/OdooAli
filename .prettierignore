@@ -1,0 +1,31 @@
+# Node modules
+node_modules/
+
+# Build folders
+dist/
+coverage/
+public/
+
+# Config files
+package.json
+tsconfig.json
+babel.config.js
+webpack.config.js
+jest.config.js
+
+# Ignore lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore docs or tests if you don't want them formatted
+docs/**
+tests/**
+
+# Ignore Python virtual environments
+.venv/
+.env/
+
+# Ignore certain IDE/editor files
+.vscode/
+.idea/

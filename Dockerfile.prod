@@ -1,27 +1,19 @@
-# استفاده از پایتون سبک
 FROM python:3.11-slim
 
-# جلوگیری از ایجاد فایل pyc و flush مستقیم stdout
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# نصب وابستگی‌ها
 RUN apt-get update && apt-get install -y \
     libpq-dev gcc curl nodejs npm \
     && rm -rf /var/lib/apt/lists/*
 
-# تنظیم مسیر کاری کانتینر
 WORKDIR /app
 
-# کپی و نصب requirements
-COPY backend/requirements.txt .
+COPY ./backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# کپی کل محتویات backend به /app
-COPY backend/. .
+COPY ./backend/. .
 
-# اجرای collectstatic از مسیر صحیح
 RUN python manage.py collectstatic --noinput
 
-# اجرای Gunicorn
 CMD ["gunicorn", "OdooALI.wsgi:application", "--bind", "0.0.0.0:8000"]

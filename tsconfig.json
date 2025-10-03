@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "OdooAli Professional TSConfig",
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "react-jsx",                          /* React 17+ JSX transform */
+    "jsxImportSource": "react",
+
+    /* Modules */
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "baseUrl": "./frontend/src",
+    "paths": {
+      "@components/*": ["frontend/src/components/*"],
+      "@pages/*": ["frontend/src/pages/*"],
+      "@layouts/*": ["frontend/src/layouts/*"],
+      "@services/*": ["frontend/src/services/*"],
+      "@store/*": ["frontend/src/store/*"],
+      "@common/*": ["frontend/src/common/*"],
+      "@public/*": ["frontend/public/*"]
+    },
+
+    /* Emit */
+    "noEmit": true,
+    "sourceMap": true,
+    "removeComments": true,
+    "importHelpers": true,
+
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+
+    /* JavaScript Support */
+    "allowJs": true,
+    "checkJs": false,
+
+    /* TypeRoots */
+    "typeRoots": ["frontend/src/common/types", "node_modules/@types"]
+  },
+  "include": [
+    "frontend/src/**/*",
+    "frontend/src/__tests__/**/*.ts",
+    "frontend/src/__tests__/**/*.tsx",
+    "./**/*",
+    "./**/.*",
+    "./**/.*.[tj]s?(x)"
+  ],
+  "exclude": ["node_modules", "dist", "build", "**/*.spec.ts", "**/*.spec.tsx"]
+}

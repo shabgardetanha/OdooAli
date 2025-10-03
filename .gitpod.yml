@@ -1,0 +1,52 @@
+tasks:
+  - init: |
+      # نصب وابستگی‌های Python
+      pip install -e .[dev]
+
+      # نصب pre-commit و اجرای install
+      pip install pre-commit
+      pre-commit install
+      pre-commit install-hooks
+
+      # نصب وابستگی‌های Node برای ESLint و Prettier
+      npm install
+
+      # اجرای یکبار pre-commit برای هماهنگ‌سازی همه فایل‌ها
+      pre-commit run --all-files || true
+
+github:
+  prebuilds:
+    master: true
+    branches: false
+    pullRequests: true
+    pullRequestsFromForks: true
+    addComment: false
+    addBadge: false
+    addLabel: false
+
+vscode:
+  extensions:
+    # Python
+    - ms-python.python
+    - ms-python.vscode-pylance
+
+    # JS/TS / Prettier
+    - esbenp.prettier-vscode
+
+    # Markdown / Lint / Spellcheck
+    - davidanson.vscode-markdownlint
+    - streetsidesoftware.code-spell-checker
+    - yzhang.markdown-all-in-one
+
+    # TOML / YAML / JSON / Git / EditorConfig
+    - bungcip.better-toml
+    - christian-kohler.path-intellisense
+    - editorconfig.editorconfig
+    - eamodio.gitlens
+    - redhat.vscode-yaml
+    - travisillig.vscode-json-stable-stringify
+
+    # Productivity
+    - ryanluker.vscode-coverage-gutters
+    - stkb.rewrap
+    - tyriar.sort-lines

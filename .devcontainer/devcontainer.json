@@ -1,0 +1,29 @@
+{
+  "name": "Web + Python Dev Container",
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:20-bullseye",
+  "features": {
+    "python": "latest"
+  },
+  "postCreateCommand": "pip install -e .[dev] && npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-typescript-tslint-plugin",
+        "dsznajder.es7-react-js-snippets",
+        "Orta.vscode-jest",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "stylelint.vscode-stylelint",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "yzhang.markdown-all-in-one",
+        "DavidAnson.vscode-markdownlint",
+        "eamodio.gitlens",
+        "editorconfig.editorconfig",
+        "christian-kohler.path-intellisense"
+      ]
+    }
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "workspaceFolder": "/workspace"
+}

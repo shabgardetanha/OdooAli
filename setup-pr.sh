@@ -20,10 +20,10 @@ git checkout -b $NEW_BRANCH || git checkout $NEW_BRANCH
 # 3️⃣ بررسی فایل‌های موجود قبل از اعمال پچ
 if [ -f "$PATCH_FILE" ]; then
     echo "Checking files for conflicts with patch..."
-    
+
     # استخراج لیست فایل‌ها از پچ
     PATCH_FILES=$(grep "^\+\+\+ b/" "$PATCH_FILE" | sed 's/^\+\+\+ b\///')
-    
+
     for FILE in $PATCH_FILES; do
         if [ -f "$FILE" ]; then
             read -p "⚠️ $FILE already exists. Overwrite it with patch? (y/n) " yn

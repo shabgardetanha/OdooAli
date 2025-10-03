@@ -1,19 +1,15 @@
-from django.http import JsonResponse
-from rest_framework import generics
-from .models import User
-from .serializers import UserSerializer
-from rest_framework.permissions import AllowAny
 from django.db import connection
+from django.http import JsonResponse
 from prometheus_client import Counter
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from .models import User
+from .serializers import UserSerializer
 
+frontend_events_total = Counter("frontend_events_total", "Frontend event counts", ["event_type"])
 
-
-frontend_events_total = Counter('frontend_events_total', 'Frontend event counts', ['event_type'])
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -34,16 +30,10 @@ def health(request):
     except Exception:
         db_status = "unhealthy"
 
-    return JsonResponse({
-        "status": "ok" if db_status == "healthy" else "error",
-        "db": db_status
-    })
+    return JsonResponse({"status": "ok" if db_status == "healthy" else "error", "db": db_status})
 
-
-
-    
 
 def frontend_event(request):
-    event_type = request.GET.get('type', 'unknown')
+    event_type = request.GET.get("type", "unknown")
     frontend_events_total.labels(event_type=event_type).inc()
-    return JsonResponse({'status': 'ok'})
+    return JsonResponse({"status": "ok"})

@@ -1,3 +1,128 @@
 {
-    "github-enterprise.uri": "https://fetc/"
+    // =========================
+    // Python
+    // =========================
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pydocstyleEnabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.analysis.languageServer": "Pylance",
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.autoImportCompletions": false,
+    "python.testing.unittestEnabled": false,
+
+    // =========================
+    // JavaScript / TypeScript
+    // =========================
+    "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "eslint.enable": true,
+    "eslint.format.enable": true,
+    "eslint.experimental.useFlatConfig": true,
+    "eslint.run": "onType",
+    "eslint.workingDirectories": ["./"],
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "editor.tabSize": 4,
+    "editor.tabCompletion": "on",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": false,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.stylelint": "explicit"
+    },
+
+    // =========================
+    // HTML / Django Templates
+    // =========================
+    "[html]": { "editor.defaultFormatter": "monosans.djlint" },
+    "[django-html]": { "editor.defaultFormatter": "monosans.djlint" },
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact",
+        "django-html": "html"
+    },
+    "files.associations": {
+        "**/templates/*/*.html": "django-html",
+        "**/templates/**/*.txt": "django-txt",
+        "**/*.html": "html"
+    },
+
+    // =========================
+    // CSS / SCSS / Styled Components
+    // =========================
+    "stylelint.validate": ["css", "scss", "scss"],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.stylelint": true
+    },
+
+    // =========================
+    // YAML
+    // =========================
+    "[yaml]": {
+        "editor.autoIndent": "keep",
+        "editor.defaultFormatter": "redhat.vscode-yaml",
+        "editor.tabSize": 2,
+        "editor.quickSuggestions": {
+            "comments": false,
+            "other": true,
+            "strings": true
+        }
+    },
+    "yaml.format.enable": true,
+    "yaml.schemaStore.enable": true,
+    "yaml.schemaStore.url": "https://www.schemastore.org/api/json/catalog.json",
+    "yaml.customTags": [
+        "!And", "!If", "!Not", "!Equals", "!Or", "!FindInMap",
+        "!Base64", "!Cidr", "!Ref", "!Sub", "!GetAtt", "!GetAZs",
+        "!ImportValue", "!Select", "!Split", "!Join"
+    ],
+
+    // =========================
+    // React / JSX
+    // =========================
+    "auto-close-tag.enableAutoCloseTag": true,
+    "auto-close-tag.enableAutoCloseSelfClosingTag": true,
+    "auto-rename-tag.activationOnLanguage": [
+        "html", "xml", "javascript", "javascriptreact"
+    ],
+
+    // =========================
+    // Git / GitLens
+    // =========================
+    "git.autoRepositoryDetection": "openEditors",
+    "gitlens.hovers.avatars": false,
+    "gitlens.hovers.annotations.over": "annotation",
+    "gitlens.hovers.annotations.changes": false,
+    "gitlens.hovers.currentLine.enabled": false,
+
+    // =========================
+    // Code Runner
+    // =========================
+    "code-runner.runInTerminal": true,
+    "code-runner.clearPreviousOutput": true,
+
+    // =========================
+    // UI / Theme
+    // =========================
+    "workbench.colorTheme": "Dracula",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.tree.indent": 20,
+    "window.zoomLevel": 1,
+    "editor.renderWhitespace": "all",
+    "indentRainbow.colors": [
+        "rgba(255,255,64,0.07)",
+        "rgba(127,255,127,0.07)",
+        "rgba(255,127,255,0.07)",
+        "rgba(79,236,236,0.07)"
+    ],
+    "indentRainbow.colorOnWhiteSpaceOnly": true
 }
