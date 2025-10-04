@@ -4,6 +4,7 @@
 
 سلام ChatGPT، طبق گفتگو قبلی درباره پروژه OdooAli، لطفاً تمام پاسخ‌ها دقیقاً مطابق تصمیمات و ساختارهای این راهنما باشند.
 
+https://github.com/shabgardetanha/OdooAli
 ---
 
 # OdooAli Project Wiki

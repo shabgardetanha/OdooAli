@@ -1,22 +1,36 @@
 from rest_framework import permissions, viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from .models import PurchaseOrder
 from .serializers import PurchaseOrderSerializer
-from .services import approve_purchase_order, create_purchase_order
+
+
+class IsAdminOrManager(permissions.BasePermission):
+    """
+    Custom permission to allow only Admins or Managers to approve/cancel.
+    """
+
+    def has_permission(self, request, view):
+        return request.user.role in ["admin", "manager"]
 
 
 class PurchaseOrderViewSet(viewsets.ModelViewSet):
-    queryset = PurchaseOrder.objects.all()
+    """
+    CRUD for Purchase Orders.
+    Queryset filtered by user's company.
+    Permissions enforced per role.
+    """
+
     serializer_class = PurchaseOrderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return PurchaseOrder.objects.filter(company=self.request.user.company)
 
     def perform_create(self, serializer):
-        return create_purchase_order(**serializer.validated_data)
+        serializer.save(company=self.request.user.company, created_by=self.request.user)
 
-    @action(detail=True, methods=["post"])
-    def approve(self, request, pk=None):
-        order = self.get_object()
-        approve_purchase_order(order)
-        return Response({"status": "approved"})
+    def get_permissions(self):
+        if self.action in ["update", "partial_update", "destroy"]:
+            permission_classes = [IsAdminOrManager]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
+        return [perm() for perm in permission_classes]

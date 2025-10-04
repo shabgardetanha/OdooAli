@@ -1,57 +1,59 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import api from '../services/api'
+import axios from 'axios'
 
-// نوع داده سفارش خرید
-interface Purchase {
+export interface PurchaseOrder {
     id: number
-    productId: number
+    product_name: string
     quantity: number
-    total: number
-    status: 'pending' | 'completed' | 'canceled'
-    // بقیه فیلدها...
+    status: 'pending' | 'approved' | 'shipped'
+    company: number
 }
 
-// نوع state
-interface PurchasesState {
-    items: Purchase[]
+interface PurchaseState {
+    items: PurchaseOrder[]
     status: 'idle' | 'loading' | 'succeeded' | 'failed'
+    error?: string | null
 }
 
-const initialState: PurchasesState = {
+const initialState: PurchaseState = {
     items: [],
     status: 'idle',
+    error: null,
 }
 
-// Thunk برای گرفتن لیست سفارش‌ها
-export const fetchPurchases = createAsyncThunk<Purchase[]>(
-    'purchases/fetchPurchases',
+export const fetchPurchaseOrders = createAsyncThunk(
+    'purchase/fetchPurchaseOrders',
     async () => {
-        const response = await api.get('/purchases/')
+        const response = await axios.get<PurchaseOrder[]>('/api/purchase_orders/')
         return response.data
     }
 )
 
-// Slice
 const purchaseSlice = createSlice({
-    name: 'purchases',
+    name: 'purchase',
     initialState,
-    reducers: {},
+    reducers: {
+        updatePurchaseOrder: (state, action: PayloadAction<PurchaseOrder>) => {
+            const index = state.items.findIndex((p) => p.id === action.payload.id)
+            if (index >= 0) state.items[index] = action.payload
+            else state.items.push(action.payload)
+        },
+    },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchPurchases.pending, (state) => {
+            .addCase(fetchPurchaseOrders.pending, (state) => {
                 state.status = 'loading'
             })
-            .addCase(
-                fetchPurchases.fulfilled,
-                (state, action: PayloadAction<Purchase[]>) => {
-                    state.status = 'succeeded'
-                    state.items = action.payload
-                }
-            )
-            .addCase(fetchPurchases.rejected, (state) => {
+            .addCase(fetchPurchaseOrders.fulfilled, (state, action) => {
+                state.status = 'succeeded'
+                state.items = action.payload
+            })
+            .addCase(fetchPurchaseOrders.rejected, (state, action) => {
                 state.status = 'failed'
+                state.error = action.error.message ?? 'Failed to fetch'
             })
     },
 })
 
+export const { updatePurchaseOrder } = purchaseSlice.actions
 export default purchaseSlice.reducer

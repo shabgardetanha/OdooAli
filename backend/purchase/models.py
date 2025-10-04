@@ -1,3 +1,3 @@
 from django.db import models
 
-# Create your models here.
+from .models.purchase_order import PurchaseOrder
