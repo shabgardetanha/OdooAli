@@ -1,233 +1,426 @@
+من دو مجموعه اطلاعاتی که دادی را ترکیب کرده‌ام و مرتب، دسته‌بندی و ساختارمند کرده‌ام بدون اینکه چیزی حذف شود. نتیجه یک مرجع کامل و مرتب برای پروژه OdooAli است که می‌توانی مستقیماً استفاده کنی:
 
+OdooAli Project – Reference Guide (Updated & Structured)
 
-# OdooAli Project – Reference Guide
+سلام ChatGPT، طبق گفتگوهای قبلی درباره پروژه OdooAli، این مستند ترکیب کامل تغییرات، ساختار و مراحل است.
+GitHub Repository
 
-سلام ChatGPT، طبق گفتگو قبلی درباره پروژه OdooAli، لطفاً تمام پاسخ‌ها دقیقاً مطابق تصمیمات و ساختارهای این راهنما باشند.
+Table of Contents
 
-https://github.com/shabgardetanha/OdooAli
----
+Backend – Apps / Modules
 
-# OdooAli Project Wiki
+Frontend – React + TypeScript
 
-## Table of Contents
-1. [Permissions & Role-Based Access](#permissions--role-based-access)
-2. [Testing](#testing)
-3. [CI/CD (GitHub Actions)](#cicd-github-actions)
-4. [Pre-commit Hooks](#pre-commit-hooks)
-5. [Live Dashboard](#live-dashboard)
-6. [Multi-Company & RBAC](#multi-company--rbac)
-7. [Frontend – React + TypeScript + Webpack](#frontend--react--typescript--webpack)
-8. [Lint & Formatting – Frontend + Backend](#lint--formatting--frontend--backend)
-9. [Dev / Build Scripts](#dev--build-scripts)
-10. [Notes & Best Practices](#notes--best-practices)
+Testing
 
----
+CI/CD
 
-## Permissions & Role-Based Access
-- **Files & Classes:**
-  - `products/permissions.py`: `IsCompanyAdminOrReadOnly`
-  - `users/permissions.py`: `IsAdmin`, `IsManager`, `IsStaff`, `IsAdminOrManager`
-- **ViewSets:**
-  - `ProductViewSet` ترکیب `permission_classes` و `get_queryset` برای Multi-Company و Role-Based Access
-  - فیلتر محصولات بر اساس `self.request.user.company`
-  - Inline Edit و Drag&Drop فقط برای Roleهای مجاز
-- Strict type checking فعال
-
----
-
-## Testing
-- **Backend:** `pytest` + `pytest-django`
-  - Unit Test برای Roleها و Companyها
-  - تست Permissions و Querysetهای شرکت کاربر
-- **Frontend:** `jest` + `react-testing-library`
-- **Coverage:** ارسال به Codecov
-- **Pre-commit hooks:** قبل از Commit، اجرای اتوماتیک تست‌ها
-
----
-
-## CI/CD (GitHub Actions)
-- اجرای تست‌ها روی **Postgres Service**
-- Lint: `flake8`
-- Formatting: `black`
-- Coverage: `pytest --cov`
-- Pre-commit checks:
-  - `pre-commit`, `black`, `flake8`, `isort`
-- اجرای خودکار Pipeline روی Pull Request
-
----
-
-## Pre-commit Hooks
-- فعال‌سازی:
-  ```bash
-  pre-commit install
-بررسی:
-
-Lint: flake8
-
-Formatting: black
-
-Import Sort: isort
-
-اطمینان از snake_case و استاندارد importها
-
-اجباری قبل از Commit
+Pre-commit Hooks
 
 Live Dashboard
-Tree View + Kanban + Inline Edit
 
-WebSocket برای Live Update (Channels)
+Multi-Company & RBAC
 
-Notification واقعی: Email / SMS / In-App
+Lint & Formatting – Frontend + Backend
+
+Dev / Build Scripts
+
+Docker / Local Dev
+
+Key Fixes / Changes
+
+Git / Version Control
+
+Notes & Best Practices
+
+Backend – Apps / Modules
+Products
+
+models.py → اضافه شدن مدل‌ها (Product، Stock و غیره) با Multi-Company و RBAC.
+
+serializers.py → Serializer برای Product و عملیات CRUD.
+
+permissions.py → Role-Based و Company-Based permissions.
+
+services.py → توابع business logic برای Product و Stock.
+
+consumers.py → WebSocket consumer برای Live Update.
+
+tasks.py → Celery tasks برای Notifications.
+
+Purchase
+
+models/purchase_order.py → اضافه شدن مدل PurchaseOrder.
+
+serializers.py → Serializer مرتبط با PurchaseOrder.
+
+services.py → توابع مربوط به عملیات خرید.
+
+RBAC و Multi-Company filtering در ViewSetها رعایت شد.
+
+فایل‌های اولیه مثل __init__.py و apps.py ساخته شدند.
+
+Sales
+
+Slice و ViewSet با Multi-Company و Role-Based filtering.
+
+WebSocket و Celery tasks برای Live Dashboard.
+
+Stock
+
+Slice، Models و Services.
+
+WebSocket و Celery tasks برای Stock Live Update.
+
+Users / Accounts
+
+AuthSlice, Register & Login در Backend.
+
+Permissions: IsAdmin, IsManager, IsStaff, IsAdminOrManager.
+
+Role-Based Multi-Company filtering.
+
+فایل‌های init_roles.py و services.py اضافه شد.
+
+Notifications
+
+Model، Views و Consumers برای Live Notification.
+
+Celery tasks + WebSocket integration.
+
+Common Backend Updates
+
+اضافه شدن docstrings برای اکثر فایل‌ها و کلاس‌ها.
+
+خطاهای flake8، black و lint fixes.
+
+استاندارد Multi-Company و RBAC رعایت شد.
+
+تنظیمات pytest و تست‌ها اضافه و آماده اجرا شد.
+
+تمام فایل‌ها با استاندارد Django REST Framework.
+
+Frontend – React + TypeScript
+Components
+
+ProductKanban.tsx → تبدیل شده به TypeScript و typed props.
+
+SalesKanban.tsx → تبدیل به TS، state با Redux و typesafe.
+
+NotificationPanel.tsx → تبدیل به TS و axios برای API call.
+
+Hooks
+
+useProductWS.ts → WebSocket hook با TypeScript و dispatch به Redux.
+
+Store / Redux Slices
+
+productsSlice.ts, salesSlice.ts, purchaseSlice.ts, authSlice.ts → تبدیل به TypeScript، createAsyncThunk و type-safe actions.
+
+API
+
+api.ts → axios instance با TypeScript.
+
+Other Frontend Config
+
+Webpack + TypeScript setup.
+
+HMR و Live Reload.
+
+SCSS + CSS Modules + Autoprefixer.
+
+HtmlWebpackPlugin + asset handling.
+
+ForkTsCheckerWebpackPlugin برای strict type checking.
+
+Linting / Prettier
+
+ESLint, Prettier, jest, react-testing-library setup.
+
+Testing
+Backend
+
+pytest + pytest-django.
+
+Unit tests برای Permissions، Multi-Company و RBAC.
+
+Coverage: pytest --cov.
+
+Frontend
+
+jest + react-testing-library.
+
+Slice tests, Component tests (ProductKanban, SalesKanban, NotificationPanel).
+
+CI/CD
+
+GitHub Actions setup:
+
+Test با Postgres service.
+
+Lint: flake8.
+
+Formatting: black.
+
+Coverage: Codecov.
+
+Pre-commit checks: black, flake8, isort.
+
+Pre-commit Hooks
+
+فعال و اجباری قبل از commit.
+
+بررسی snake_case و استاندارد import.
+
+بررسی lint، formatting و import sort.
+
+Live Dashboard
+
+Tree View + Kanban + Inline Edit.
+
+WebSocket برای Live Update (Channels).
+
+Notification واقعی: Email / SMS / In-App.
 
 Trigger در perform_update:
 
-python
-Copy code
 async_to_sync(channel_layer.group_send)
-رعایت Permissions و Roleها
+
+
+رعایت Permissions و Roleها.
 
 Multi-Company & RBAC
-همه Querysetها بر اساس Company کاربر فیلتر می‌شوند
 
-Inline Edit و Drag&Drop فقط برای Roleهای مجاز
+همه Querysetها بر اساس Company کاربر فیلتر می‌شوند.
 
-ViewSetها strict type checking دارند
+Inline Edit و Drag&Drop فقط برای Roleهای مجاز.
 
-Frontend – React + TypeScript + Webpack
-HMR و Live Reload
+ViewSetها strict type checking دارند.
 
-پشتیبانی از JSX / TSX، SCSS و فایل‌های رسانه‌ای
+Role-Based UI در Frontend.
 
-Aliasها مطابق frontend/src:
-
-RBAC, Store, Pages, Components, Common
-
-Babel:
-
-پشتیبانی کامل از JS/TS/JSX/TSX، کلاس‌ها، optional chaining، runtime helpers
-
-PostCSS + Autoprefixer: CSS حرفه‌ای و ریسپانسیو
-
-SCSS + CSS Modules: style-loader, MiniCssExtractPlugin, autoprefixer
-
-Asset Handling: تصاویر و SVG با loader مناسب
-
-HtmlWebpackPlugin: meta, favicon, template (frontend/src/index.ejs)
-
-DevServer: HMR و SPA fallback
-
-Optimization (Production): splitChunks, runtimeChunk, minification, cache-busting
-
-Type Checking: ForkTsCheckerWebpackPlugin جدا از Babel
-
-Strict Mode، include/exclude تست‌ها و utils، allowJs: true، sourceMap: true
-
-React 17+: jsx: react-jsx، module: ESNext برای tree-shaking
+WebSocket فقط داده‌های مجاز را ارسال می‌کند.
 
 Lint & Formatting – Frontend + Backend
-Backend: flake8, black, isort
 
-Frontend: eslint, prettier
+Backend: flake8, black, isort.
 
-Pre-commit hooks فعال و اجباری
+Frontend: eslint, prettier.
 
-استاندارد importها و snake_case برای همه ماژول‌ها
+Pre-commit hooks فعال و اجباری.
 
-بررسی دقیق typeها و پسوند فایل‌ها برای ESM strict mode
+بررسی دقیق typeها و پسوند فایل‌ها برای ESM strict mode.
 
 Dev / Build Scripts
-start: محیط توسعه با HMR
 
-build: production با minification، cache-busting و code splitting
+start: محیط توسعه با HMR.
 
-React + TS + Webpack: Tree shaking و خروجی مدرن
+build: production با minification، cache-busting و code splitting.
+
+React + TS + Webpack: Tree shaking و خروجی مدرن.
+
+Docker / Local Dev
+
+Docker Compose برای Backend + Postgres + Redis + Celery.
+
+محیط dev با HMR و Live Reload.
+
+Build Production با cache-busting و code-splitting.
+
+Key Fixes / Changes
+
+رفع ارورهای:
+
+ReferenceError: module is not defined in ES module scope → jest.config.cjs
+
+jest-environment-jsdom نصب شد.
+
+Tailwind config مشکل ESM حل شد.
+
+Hash mismatch pip fix برای Python packages.
+
+Docstring fixes: D100, D101, D102, D103, D104, D105, D106, D205, D212, D415.
+
+Frontend TypeScript conversion تمام slices و components.
+
+Multi-company filtering و RBAC در همه ViewSetها و hooks.
+
+Git / Version Control
+
+تمام تغییرات آماده commit و push.
+
+پیشنهادی برای commit message structure:
+
+feat(purchase): add PurchaseOrder model and serializer
+fix(rbac): enforce multi-company filtering
+chore(docs): add missing docstrings
+
+
+Tagging برای نسخه release بعد از commit:
+
+git tag -a v1.2.1 -m "Purchase module + RBAC + Live Dashboard fixes"
+git push origin v1.2.1
+
+
+
+
+
+Tree View صورت hierarchical tree
+
+
+```
+OdooAli/
+├── backend/
+│   ├── products/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── models.py                # Product, Stock models (Multi-Company + RBAC)
+│   │   ├── serializers.py           # CRUD serializers
+│   │   ├── permissions.py           # IsCompanyAdminOrReadOnly
+│   │   ├── services.py              # Business logic
+│   │   ├── consumers.py             # WebSocket Live Update
+│   │   └── tasks.py                 # Celery Notifications
+│   ├── purchase/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── models/
+│   │   │   └── purchase_order.py    # PurchaseOrder model
+│   │   ├── serializers.py
+│   │   └── services.py
+│   ├── sales/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── serializers.py
+│   │   ├── services.py
+│   │   ├── consumers.py
+│   │   └── tasks.py
+│   ├── stock/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── services.py
+│   │   ├── consumers.py
+│   │   └── tasks.py
+│   ├── users/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── auth_slice.py             # Register & Login
+│   │   ├── permissions.py            # IsAdmin, IsManager, IsStaff, IsAdminOrManager
+│   │   ├── services.py
+│   │   └── init_roles.py
+│   └── notifications/
+│       ├── __init__.py
+│       ├── models.py
+│       ├── views.py
+│       ├── consumers.py
+│       └── tasks.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ProductKanban.tsx
+│   │   │   ├── SalesKanban.tsx
+│   │   │   └── NotificationPanel.tsx
+│   │   ├── hooks/
+│   │   │   └── useProductWS.ts
+│   │   ├── store/
+│   │   │   ├── productsSlice.ts
+│   │   │   ├── salesSlice.ts
+│   │   │   ├── purchaseSlice.ts
+│   │   │   └── authSlice.ts
+│   │   ├── api/
+│   │   │   └── api.ts
+│   │   └── index.tsx
+│   ├── webpack.config.js / .cjs
+│   ├── tsconfig.json
+│   ├── package.json
+│   └── postcss.config.js
+│
+├── tests/
+│   ├── backend/
+│   │   ├── test_products.py
+│   │   ├── test_purchase.py
+│   │   ├── test_sales.py
+│   │   └── test_users.py
+│   └── frontend/
+│       ├── ProductKanban.test.tsx
+│       ├── SalesKanban.test.tsx
+│       └── NotificationPanel.test.tsx
+│
+├── docker/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── entrypoint.sh
+│
+├── config/
+│   ├── jest.config.cjs
+│   ├── flake8.ini
+│   ├── black.toml
+│   └── pre-commit-config.yaml
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
+
+
+
+توضیحات Tree View
+
+Backend
+
+تمام ماژول‌ها (Products, Purchase, Sales, Stock, Users, Notifications) آماده و RBAC compliant هستند.
+
+WebSocket و Celery tasks برای Live Dashboard و Notifications پیاده شده است.
+
+Serializerها، services و permissions برای Multi-Company رعایت شده‌اند.
+
+Frontend
+
+همه Components و Redux slices به TypeScript تبدیل شده و typed props/actionها دارند.
+
+WebSocket hook (useProductWS) برای Live Update.
+
+Webpack + HMR + SCSS + CSS Modules + Autoprefixer فعال است.
+
+Testing
+
+Backend: pytest + pytest-django.
+
+Frontend: jest + react-testing-library.
+
+Docker
+
+Compose شامل Backend, Postgres, Redis و Celery.
+
+Config
+
+Jest, Lint (flake8), Formatter (black) و Pre-commit فعال و اجباری.
+
+Git
+
+تغییرات آماده commit و push هستند. Tagging برای release نیز تعریف شده.
+
+
+
 
 Notes & Best Practices
-هیچ تصمیم یا استانداردی حذف نشود
 
-همه جزئیات Permissions، Testing، CI/CD، Pre-commit و Live Dashboard رعایت شوند
+هیچ تصمیم یا استانداردی حذف نشود.
 
+Modular: هر اپ (Users, Products, Companies) جدا و دارای permissions.py مستقل.
 
+Secure: RBAC + Multi-Company.
 
-خلاصه معماری پروژه OdooAli
-1️⃣ لایه‌ها (Layers)
-1.	Frontend (UI Layer)
-o	React یا هر فریمورک SPA مشابه
-o	Tree View + Kanban + Inline Edit
-o	Live Update با WebSocket
-o	Role-Based UI: نمایش و ویرایش اجزاء بسته به Role و Company
-2.	Backend (Business Logic Layer)
-o	Django + Django REST Framework (DRF)
-o	ViewSetها با:
-	Permissionها: Role-Based و Company-Based
-	Queryset فیلتر شده بر اساس Company کاربر
-o	WebSocket (Django Channels) برای Live Dashboard
-o	Celery برای Notifications (Email/SMS/In-App)
-o	Multi-Company Support با ForeignKey به Company
-o	Role-Based Access Control (RBAC) در سطح مدل و ViewSet
-3.	Database Layer
-o	PostgreSQL
-o	مدل‌ها:
-	Company: تعریف شرکت‌ها
-	User: با Role و شرکت مرتبط
-	Product: با Company ForeignKey و Price/Stock
-o	Simple History برای ثبت تغییرات و دلایل تغییر (update_change_reason)
-________________________________________
-2️⃣ CI/CD و Quality Layer
-•	GitHub Actions برای:
-o	اجرای Unit Test با pytest
-o	Code Coverage و گزارش به Codecov
-o	Lint و Formatting (flake8 + black)
-•	Pre-commit Hooks:
-o	black، flake8، isort قبل از Commit
-•	اطمینان از کیفیت، یکپارچگی و عدم Regression
-________________________________________
-3️⃣ Live Features
-•	WebSocket Channels:
-o	Live Update محصولات در Tree/Kanban/Inline Edit
-o	ارسال Notification هنگام تغییر Price یا Stock
-•	Inline Edit و Drag&Drop فقط برای Roleهای مجاز
-•	Multi-Company: کاربران فقط داده‌های شرکت خود را می‌بینند
-________________________________________
-4️⃣ معماری Permission & Role
-لایه	Responsibility
-Model	Company و Role به Product و User مرتبط
-ViewSet	ترکیب permission_classes و get_queryset برای کنترل دسترسی
-Frontend	نمایش اجزاء UI بر اساس Role و Company
-WebSocket	ارسال Live Update فقط برای داده‌های مجاز کاربر
-________________________________________
-5️⃣ Docker / محیط توسعه
-•	Docker Compose (اختیاری)
-•	Backend + Postgres + Redis + Celery
-•	قابلیت توسعه مستقل و تست Local / Prod
-________________________________________
-6️⃣ خلاصه جریان عملیاتی (Flow)
-1.	کاربر با Role و Company وارد سیستم می‌شود
-2.	Frontend اجزاء مجاز (Tree/Kanban/Inline Edit) را نمایش می‌دهد
-3.	تغییرات محصولات → Backend → ذخیره → ارسال WebSocket → Live Update Dashboard
-4.	Notificationها توسط Celery به کاربر ارسال می‌شود
-5.	تست‌ها و Quality Check در CI/CD اجرا می‌شوند
-________________________________________
-💡 ویژگی‌های کلیدی معماری
-•	Modular: هر اپ (Users, Products, Companies) جدا و دارای permissions.py مستقل
-•	Secure: RBAC + Multi-Company
-•	Live: WebSocket و Celery
-•	Maintainable: Pre-commit, Lint, Coverage, CI/CD
-•	Scalable: معماری لایه‌ای و قابلیت Dockerization
+Live: WebSocket و Celery.
 
+Maintainable: Pre-commit, Lint, Coverage, CI/CD.
 
-
-⚡ نکته مهم:
-
-هیچ تصمیم یا استانداردی از این راهنما حذف نشود.
-
-پاسخ‌ها دقیقاً طبق همین تصمیمات، کلاس‌ها، تست‌ها و Workflowها باشد.
+Scalable: معماری لایه‌ای و قابلیت Dockerization.
 
 همه جزئیات Permissions، Testing، CI/CD، Pre-commit و Live Dashboard رعایت شوند.
 
 
 
----
-
-مرحله یا سوال جدید:
-[توضیح مرحله یا قابلیت جدید اینجا وارد شود]
+----
+سوال

@@ -1,16 +1,12 @@
-# backend/products/consumers.py
-import json
-
-from channels.generic.websocket import AsyncWebsocketConsumer
+from asgiref.sync import async_to_sync
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
 
-class ProductConsumer(AsyncWebsocketConsumer):
+class ProductConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
-        await self.channel_layer.group_add("products", self.channel_name)
+        self.group_name = f"company_{self.scope['user'].company_id}"
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
 
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard("products", self.channel_name)
-
     async def product_update(self, event):
-        await self.send(text_data=json.dumps(event["data"]))
+        await self.send_json(event["data"])

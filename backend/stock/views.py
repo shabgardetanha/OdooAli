@@ -1,22 +1,16 @@
-from rest_framework import permissions, viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework import viewsets
+from users.permissions import IsAdminOrManager
 
-from .models import StockTransfer
-from .serializers import StockTransferSerializer
-from .services import approve_stock_transfer, create_stock_transfer
+from .models import Stock
+from .serializers import StockSerializer
 
 
-class StockTransferViewSet(viewsets.ModelViewSet):
-    queryset = StockTransfer.objects.all()
-    serializer_class = StockTransferSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class StockViewSet(viewsets.ModelViewSet):
+    serializer_class = StockSerializer
+    permission_classes = [IsAdminOrManager]
 
-    def perform_create(self, serializer):
-        return create_stock_transfer(**serializer.validated_data)
-
-    @action(detail=True, methods=["post"])
-    def approve(self, request, pk=None):
-        transfer = self.get_object()
-        approve_stock_transfer(transfer)
-        return Response({"status": "approved"})
+    def get_queryset(self):
+        user_company = getattr(self.request.user, "company", None)
+        if not user_company:
+            return Stock.objects.none()
+        return Stock.objects.filter(company=user_company)

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "channels",
     "debug_toolbar",
     # Custom apps
+    "companies",
     "accounts",
     "products",
     "stock",
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     "users",
     "reports",
     "notifications",
-    "companies",
 ]
 
 MIDDLEWARE = [
